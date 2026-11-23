@@ -4,7 +4,9 @@
 
 GitHub Actions 每天北京时间 09:23 检查稳定版，也可在 Actions 页面手动运行。新版本在两种架构上分别编译、解包、检查配置并测试 HTTP 服务，均通过后上传至 [Releases](https://github.com/ainuoyan/nginx-unofficial-builds/releases)。
 
-下载本机架构的包和同一 Release 的 SHA256SUMS，在下载目录执行：
+nginx 使用上游默认安装目录 `/usr/local/nginx`。安装在该目录时可直接运行 `/usr/local/nginx/sbin/nginx -t` 检查配置。
+
+如需在其他目录运行，下载本机架构的包和同一 Release 的 SHA256SUMS，在下载目录执行：
 
 ```sh
 sha256sum --ignore-missing -c SHA256SUMS
