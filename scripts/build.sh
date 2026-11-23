@@ -1,6 +1,6 @@
 #!/bin/sh
 set -eu
-apk add --no-cache build-base linux-headers openssl-dev openssl-libs-static pcre2-dev zlib-dev zlib-static curl
+apk add --no-cache build-base linux-headers openssl-dev openssl-libs-static pcre2-dev pcre2-static zlib-dev zlib-static curl
 version=$1
 arch=$(uname -m)
 name=nginx-$version-linux-$arch
@@ -17,6 +17,7 @@ strip "$name/sbin/nginx"
 if readelf -l "$name/sbin/nginx" | grep -q INTERP; then exit 1; fi
 tar czf "/out/$name.tar.gz" "$name"
 mkdir test
+chmod o+x "$(dirname "$PWD")" "$PWD"
 cd test
 tar xzf "/out/$name.tar.gz"
 cd "$name"
