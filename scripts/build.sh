@@ -8,10 +8,12 @@ cd "$(mktemp -d)"
 curl -fsSLO --retry 3 "https://nginx.org/download/nginx-$version.tar.gz"
 tar xzf "nginx-$version.tar.gz"
 cd "nginx-$version"
-./configure --with-ld-opt=-static --with-http_realip_module --with-http_ssl_module --with-http_v2_module --with-stream --with-stream_ssl_module --with-threads
+./configure --group=nogroup --with-ld-opt=-static --with-http_realip_module --with-http_ssl_module --with-http_v2_module --with-stream --with-stream_ssl_module --with-threads
 make -j"$(nproc)"
 make install DESTDIR="$PWD/stage"
 mv stage/usr/local/nginx "$name"
+cp /packaging/* "$name/"
+printf '%s\n' "$arch" > "$name/ARCH"
 cp LICENSE "$name/"
 strip "$name/sbin/nginx"
 if readelf -l "$name/sbin/nginx" | grep -q INTERP; then exit 1; fi

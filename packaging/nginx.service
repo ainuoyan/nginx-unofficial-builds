@@ -1,0 +1,16 @@
+[Unit]
+Description=nginx (nginx-unofficial-builds)
+After=network.target
+
+[Service]
+Type=exec
+ExecStartPre=/usr/local/nginx/sbin/nginx -t
+ExecStart=/usr/local/nginx/sbin/nginx -g "daemon off;"
+ExecStartPost=/bin/sh -c 'for i in $(seq 1 100); do pgrep -P "$MAINPID" -x nginx >/dev/null && exit 0; kill -0 "$MAINPID" 2>/dev/null || exit 1; sleep 0.1; done; exit 1'
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGQUIT
+KillMode=mixed
+TimeoutStopSec=90
+
+[Install]
+WantedBy=multi-user.target
