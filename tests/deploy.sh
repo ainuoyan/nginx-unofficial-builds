@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Run only on a disposable GitHub-hosted Linux runner.
-set -euo pipefail
+set -euxo pipefail
 prefix=/usr/local/nginx
 unit=/etc/systemd/system/nginx.service
 [[ ! -e $prefix && ! -e $unit && ! -L $unit ]]
@@ -11,6 +11,10 @@ if [[ -n $vendor ]]; then
     if systemctl is-active --quiet nginx.service; then exit 1; fi
     mv "$vendor" "$tmp/vendor.service"
     trap 'mv "$tmp/vendor.service" "$vendor"; systemctl daemon-reload' EXIT
+    if [[ -f /etc/init.d/nginx ]]; then
+        mv /etc/init.d/nginx "$tmp/vendor.init"
+        trap 'mv "$tmp/vendor.init" /etc/init.d/nginx; mv "$tmp/vendor.service" "$vendor"; systemctl daemon-reload' EXIT
+    fi
     systemctl daemon-reload
 fi
 tar -xf "$1" -C "$tmp"
