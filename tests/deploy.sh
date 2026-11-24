@@ -22,6 +22,8 @@ cd "$tmp"/nginx-*-linux-*
 reject() { if "$@"; then echo "unexpected success: $*" >&2; exit 1; fi; }
 for script in install update uninstall; do
     "./$script.sh" --lang zh --help | grep -q '用法'
+    reject "./$script.sh" --bad --lang zh 2>"$tmp/argument-error"
+    grep -Fxq '未知选项：--bad' "$tmp/argument-error"
     "./$script.sh" --lang en --help | grep -q Usage
 done
 # Use the distribution defaults, with a private test listener.

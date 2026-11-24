@@ -10,6 +10,7 @@ no_service=false
 no_start=false
 adopt=false
 help=false
+argument_error=()
 
 say() { if [[ $lang == zh ]]; then echo "$2"; else echo "$1"; fi; }
 fail() { say "$1" "$2" >&2; exit 1; }
@@ -18,16 +19,19 @@ while (( $# )); do
         --lang) shift; lang=${1:-}; [[ $lang == en || $lang == zh ]] || fail 'Use --lang en|zh' '请使用 --lang en|zh' ;;
         -h|--help) help=true ;;
         --no-service|--no-start|--adopt)
-            [[ $operation == install ]] || fail "Invalid option: $1" "无效选项：$1"
+            if [[ $operation != install && -z ${argument_error[0]:-} ]]; then
+                argument_error=("Invalid option: $1" "无效选项：$1")
+            fi
             case "$1" in
                 --no-service) no_service=true ;;
                 --no-start) no_start=true ;;
                 --adopt) adopt=true ;;
             esac ;;
-        *) fail "Unknown option: $1" "未知选项：$1" ;;
+        *) if [[ -z ${argument_error[0]:-} ]]; then argument_error=("Unknown option: $1" "未知选项：$1"); fi ;;
     esac
     shift
 done
+if [[ -n ${argument_error[0]:-} ]]; then fail "${argument_error[@]}"; fi
 if "$help"; then
     say "Usage: sudo ./$operation.sh [--lang en|zh]" "用法：sudo ./$operation.sh [--lang en|zh]"
     case $operation in
