@@ -2,7 +2,7 @@
 
 从 [nginx 官方稳定版](https://nginx.org/en/download.html)源码编译 Linux 静态二进制，提供 x86_64（AMD64）和 aarch64（ARM64）两种压缩包。包含默认配置、HTML、HTTPS、HTTP/2 和 stream 模块。构建方式参考 [jirutka/nginx-binaries](https://github.com/jirutka/nginx-binaries)。
 
-GitHub Actions 每天北京时间 09:23 检查稳定版，也可在 Actions 页面手动运行。新版本在两种架构上分别编译、解包、检查配置并测试 HTTP 服务，均通过后上传至 [Releases](https://github.com/ainuoyan/nginx-unofficial-builds/releases)。
+GitHub Actions 每天北京时间 09:23 和 21:23 检查稳定版，也可在 Actions 页面手动运行。新版本在两种架构上分别编译、解包、检查配置并测试 HTTP 服务，均通过后上传至 [Releases](https://github.com/ainuoyan/nginx-unofficial-builds/releases)。
 
 nginx 使用上游默认安装目录 `/usr/local/nginx`。安装在该目录时可直接运行 `/usr/local/nginx/sbin/nginx -t` 检查配置。
 
