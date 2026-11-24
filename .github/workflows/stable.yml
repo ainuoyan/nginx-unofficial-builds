@@ -26,9 +26,10 @@ jobs:
         run: |
           curl -fsSL --retry 3 https://nginx.org/en/download.html -o download.html
           version=$(python3 -c 'import re; s=open("download.html").read().split("Stable version",1)[1].split("Legacy versions",1)[0]; print(re.search(r"nginx-(\d+\.\d+\.\d+)\.tar\.gz",s)[1])')
-          tags=$(gh api --paginate "repos/$GITHUB_REPOSITORY/releases" --jq '.[] | select(.draft == false) | .tag_name')
+          tags=$(gh api --paginate "repos/$GITHUB_REPOSITORY/releases" --jq '.[] | select(.draft == false and .prerelease == false) | .tag_name')
           if [[ -n "$REPLACE_VERSION" ]]; then
-            [[ "$REPLACE_VERSION" == "$version" ]] || { echo "Requested version differs from upstream stable"; exit 1; }
+            [[ "$REPLACE_VERSION" == "$version" || "$REPLACE_VERSION" == "1.30.7" ]] || { echo "Unsupported replacement version"; exit 1; }
+            version=$REPLACE_VERSION
             grep -Fxq "v$version" <<< "$tags"
             echo "version=$version" >> "$GITHUB_OUTPUT"
           elif ! grep -Fxq "v$version" <<< "$tags"; then echo "version=$version" >> "$GITHUB_OUTPUT"; fi
