@@ -5,6 +5,14 @@ prefix=/usr/local/nginx
 unit=/etc/systemd/system/nginx.service
 [[ ! -e $prefix && ! -e $unit && ! -L $unit ]]
 tmp=$(mktemp -d)
+vendor=$(systemctl show -p FragmentPath --value nginx.service)
+if [[ -n $vendor ]]; then
+    [[ $vendor == /usr/lib/systemd/system/nginx.service || $vendor == /lib/systemd/system/nginx.service ]]
+    if systemctl is-active --quiet nginx.service; then exit 1; fi
+    mv "$vendor" "$tmp/vendor.service"
+    trap 'mv "$tmp/vendor.service" "$vendor"; systemctl daemon-reload' EXIT
+    systemctl daemon-reload
+fi
 tar -xf "$1" -C "$tmp"
 cd "$tmp"/nginx-*-linux-*
 reject() { if "$@"; then echo "unexpected success: $*" >&2; exit 1; fi; }
